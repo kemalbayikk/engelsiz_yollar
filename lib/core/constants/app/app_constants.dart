@@ -2,8 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
-class AppConstants
- {
+class AppConstants {
   static void showNormalToast(String title,
       {String subTitle,
       Color backColor = Colors.white,
@@ -31,7 +30,7 @@ class AppConstants
       Function() okPress,
       Function() cancelPress,
       DialogType dialogType = DialogType.INFO_REVERSED}) async {
-   await AwesomeDialog(
+    await AwesomeDialog(
       context: context,
       width: 400,
       useRootNavigator: true,
@@ -99,6 +98,13 @@ class AppConstants
         offset: Offset(1, 1),
         blurRadius: 2,
         spreadRadius: 0.2)
+  ];
+  static List<BoxShadow> shadow_2 = [
+    BoxShadow(
+        color: Colors.black.withOpacity(.5),
+        offset: Offset(2, 2),
+        blurRadius: 4,
+        spreadRadius: 0.4)
   ];
 
   static String emailKontrol(String mail) {
