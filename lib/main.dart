@@ -29,6 +29,9 @@ class MyApp extends StatelessWidget {
       title: 'Material App',
       debugShowCheckedModeBanner: false,
       builder: BotToastInit(),
+      theme: ThemeData(
+        backgroundColor: Colors.white60
+      ),
       navigatorObservers: [
       BotToastNavigatorObserver()
       ],
