@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "912226594912",
+    "project_id": "engelsizyollar-f418f",
+    "storage_bucket": "engelsizyollar-f418f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912226594912:android:a4a672dcce61dd93a21305",
+        "android_client_info": {
+          "package_name": "com.example.engelsiz_yollar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912226594912-g3i6rhhbkvhe5pagtrou6iedurpcesbg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.engelsiz_yollar",
+            "certificate_hash": "d88e8f74ddb151167880f14877720e596c1dfae3"
+          }
+        },
+        {
+          "client_id": "912226594912-spgnsqk1v14ri4m99hkm7il9vodl98u3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhhf55NQ4K7rOnFNCCs4gIEF4Nc44Angg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912226594912-spgnsqk1v14ri4m99hkm7il9vodl98u3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

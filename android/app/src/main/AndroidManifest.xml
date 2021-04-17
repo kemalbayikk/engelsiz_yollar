@@ -3,6 +3,11 @@
    <application
         android:label="engelsiz_yollar"
         android:icon="@mipmap/ic_launcher">
+
+          <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDhhf55NQ4K7rOnFNCCs4gIEF4Nc44Angg" />
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
