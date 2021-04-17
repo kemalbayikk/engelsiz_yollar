@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
 import 'package:engelsiz_yollar/view/home/pin_page/view/pin_page_view.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,37 @@ abstract class _AnasayfaViewModelBase with Store {
 
   @observable
   int myNum = 0;
+
+  @observable
+  var allData;
+  
+
+  CollectionReference _collectionRef =
+    FirebaseFirestore.instance.collection('pins');
+
+Future<void> getData() async {
+    // Get docs from collection reference
+    
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    double latitude;
+    double longitude;
+
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    for(int i = 0;i < allData.length ; i++) {
+      print(allData[i][1].toString());
+      markers.add(Marker(
+        markerId: MarkerId(allData[i]["pinId"].toString()),
+        position: LatLng(double.parse(allData[i]["latitude"].toString()),double.parse(allData[i]["longitude"].toString())),
+        infoWindow:
+            InfoWindow(title: allData[i]["description"].toString()),
+        icon: BitmapDescriptor.defaultMarker,
+      ));
+      print(allData[0]);
+    }
+
+    print(allData);
+}
 
   @action
   void increment() {

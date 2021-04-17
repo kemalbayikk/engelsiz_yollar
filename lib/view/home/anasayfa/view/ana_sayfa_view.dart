@@ -16,6 +16,7 @@ class _AnasayfaViewState extends State<AnasayfaView> {
   @override
   void initState() {
     _viewModel.getCurrentLocation();
+    _viewModel.getData();
     super.initState();
   }
 
