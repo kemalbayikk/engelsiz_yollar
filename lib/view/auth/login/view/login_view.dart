@@ -24,7 +24,7 @@ class LoginView extends StatelessWidget {
           goBackButton: 'GERİ',
           confirmPasswordHint: 'Şifre Tekrar',
           confirmPasswordError: 'Şifreler aynı değil',
-          signUpSuccess: 'Kaydınız Başarıyla Yapılmıştır',
+          signUpSuccess: 'Kaydınız Başarıyla Yapılmıştır ',
           flushbarTitleSuccess: 'Başarılı',
           flushbarTitleError: 'Hata'),
       onLogin: (data) async {
