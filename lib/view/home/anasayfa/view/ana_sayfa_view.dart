@@ -27,6 +27,7 @@ class _AnasayfaViewState extends State<AnasayfaView> {
         children: [
           Observer(builder: (_) {
             return GoogleMap(
+              
               initialCameraPosition: CameraPosition(
                 target: _viewModel.lastMapPosition,
                 zoom: 16.0,

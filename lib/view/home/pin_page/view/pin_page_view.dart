@@ -1,4 +1,8 @@
-import 'package:engelsiz_yollar/view/home/anasayfa/view/ana_sayfa_view.dart';
+import 'package:engelsiz_yollar/core/components/buttons/my_button.dart';
+import 'package:engelsiz_yollar/core/components/cards/image_card.dart';
+import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
+import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
+import 'package:engelsiz_yollar/core/init/navigation/navigation_service.dart';
 import 'package:engelsiz_yollar/view/home/pin_page/viewmodel/pin_page_viewmodel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +16,7 @@ import 'package:image/image.dart' as Im;
 class PinPage extends StatefulWidget {
   final double latitude;
   final double longitude;
-  File image;
+   File image;
   PinPage({this.latitude, this.longitude, this.image});
 
   @override
@@ -22,20 +26,35 @@ class PinPage extends StatefulWidget {
 class _PinPageState extends State<PinPage> {
   //final PinPageViewModel _pinPageViewModel = PinPageViewModel();
 
-  final Reference storageRef = FirebaseStorage.instance.ref();
-  final usersRef = FirebaseFirestore.instance.collection('users');
-  final pinsRef = FirebaseFirestore.instance.collection('pins');
-  TextEditingController captionController = TextEditingController();
-  String pinId = Uuid().v4();
+  Reference storageRef = FirebaseStorage.instance.ref();
+  var usersRef;
+  var pinsRef;
+  TextEditingController captionController;
+  String pinId;
 
-  createPinInFirestore(
-      {String mediaUrl,
-      String description,
-      UserFromFirebase user,
-      double latitude,
-      double longitude,
-      //DocumentSnapshot doc
-      }) {
+  @override
+  void initState() {
+    super.initState();
+    usersRef = FirebaseFirestore.instance.collection('users');
+    pinsRef = FirebaseFirestore.instance.collection('pins');
+    captionController = TextEditingController();
+    pinId = Uuid().v4();
+  }
+
+  @override
+  void dispose() {
+    captionController.dispose();
+    super.dispose();
+  }
+
+  createPinInFirestore({
+    String mediaUrl,
+    String description,
+    UserFromFirebase user,
+    double latitude,
+    double longitude,
+    //DocumentSnapshot doc
+  }) {
     pinsRef.doc(pinId).set({
       "pinId": pinId,
       //"ownerId": doc['uid'],
@@ -65,15 +84,12 @@ class _PinPageState extends State<PinPage> {
     return downloadUrl;
   }
 
-  handleSubmit(parentContext) async {
-    //DocumentSnapshot doc = await usersRef.doc(user.uid).get();
-
-    String filePath = widget.image.path;
-    print(filePath);
-    if (filePath.contains("jpg")) {
+ void handleSubmit(parentContext) async {
+    var filePath = widget.image.path;
+    if (filePath.contains('jpg')) {
       await compressImage();
     }
-    String mediaUrl = await uploadImage(widget.image);
+    var mediaUrl = await uploadImage(widget.image);
     createPinInFirestore(
       mediaUrl: mediaUrl,
       description: captionController.text,
@@ -83,103 +99,47 @@ class _PinPageState extends State<PinPage> {
       //doc: doc,
     );
     captionController.clear();
-    setState(() {
-      //isUploading = false;
-      pinId = Uuid().v4();
-    });
-
-            Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AnasayfaView()));
-
-    //_showToast();
-
-    /* Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => afterSign(
-            user: user,
-            whyHere: 'profile',
-          ),
-        ),
-      ); */
+    pinId = Uuid().v4();
+    await NavigationService.instance.navPop;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Sorun Paylaş'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (captionController.text.isNotEmpty) {
+            handleSubmit(context);
+          } else {
+            AppConstants.showErrorToast('Açıklama',
+                subTitle: 'Lütfen bir açıklama giriniz');
+          }
+        },
+        tooltip: 'Paylaş',
+        child: Icon(
+          Icons.send,
+          color: Colors.white,
+        ),
+      ),
       body: ListView(
         children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height / 5,
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.fitHeight,
-                    image: FileImage(widget.image),
-                  ),
-                ),
+          ImageCard(image: widget.image),
+          MyButton(
+            child: TextField(
+              controller: captionController,
+              style: context.textTheme.bodyText1.copyWith(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Bir açıklama yaz ... ',
+                hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 50,
+                    color: Colors.white),
+                border: InputBorder.none,
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-          ),
-          Container(
-              decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(24.0)),
-              child: Column(
-                children: [],
-              )),
-          Padding(
-            padding: EdgeInsets.only(top: 20),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.circular(24.0)),
-            child: ListTile(
-              title: Container(
-                width: 250.0,
-                child: TextField(
-                  controller: captionController,
-                  decoration: InputDecoration(
-                    hintText: "Bir açıklama yaz ... ",
-                    hintStyle: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height / 50,
-                        color: Colors.white),
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            width: 100,
-            height: 100,
-            alignment: Alignment.center,
-            child: RaisedButton.icon(
-              label: Text(
-                "Paylaş",
-                style: TextStyle(color: Colors.white),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24.0),
-              ),
-              color: Theme.of(context).primaryColor,
-              onPressed: () {
-                handleSubmit(context);
-              },
-              icon: Icon(
-                Icons.send,
-                color: Colors.white,
-              ),
-            ),
-          )
         ],
       ),
     );
