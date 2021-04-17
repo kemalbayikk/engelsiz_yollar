@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:engelsiz_yollar/view/auth/login/view/login_view.dart';
 import 'package:engelsiz_yollar/view/home/anasayfa/view/ana_sayfa_view.dart';
 import 'package:engelsiz_yollar/view/splash/splas_view.dart';
@@ -25,6 +26,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Material App',
       debugShowCheckedModeBanner: false,
+      builder: BotToastInit(),
+      navigatorObservers: [
+      BotToastNavigatorObserver()
+      ],
        navigatorKey: NavigationService.instance.navigatorKey,
       onGenerateRoute: NavigationRoute.instance.onGenerateRoute,
       routes: {
