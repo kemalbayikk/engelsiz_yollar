@@ -3,4 +3,5 @@ class NavigationConstant {
   static const LOGIN_VIEW = '/login_view';
   static const HOME_VIEW = '/home_view';
   static const SPLASH_SCREEN = '/splash_screen';
+  static const PIN_VIEW = '/pin_page_view';
 }
