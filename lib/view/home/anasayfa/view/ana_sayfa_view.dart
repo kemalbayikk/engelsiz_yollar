@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
 import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
 import 'package:engelsiz_yollar/view/home/anasayfa/viewmodel/ana_sayfa_viewmodel.dart';
@@ -17,6 +19,8 @@ class _AnasayfaViewState extends State<AnasayfaView> {
   void initState() {
     _viewModel.getCurrentLocation();
     _viewModel.getData();
+      //const oneSec = const Duration(seconds:2);
+      //new Timer.periodic(oneSec, (Timer t) => _viewModel.checkDistancesPeriodically());
     super.initState();
   }
 

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
@@ -8,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobx/mobx.dart';
+import 'package:vector_math/vector_math.dart';
 part 'ana_sayfa_viewmodel.g.dart';
 
 class AnasayfaViewModel = _AnasayfaViewModelBase with _$AnasayfaViewModel;
@@ -39,15 +41,11 @@ abstract class _AnasayfaViewModelBase with Store {
 
 Future<void> getData() async {
     // Get docs from collection reference
-    
     QuerySnapshot querySnapshot = await _collectionRef.get();
-    double latitude;
-    double longitude;
-
     // Get data from docs and convert map to List
     allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    if(allData != null ) {
     for(int i = 0;i < allData.length ; i++) {
-      print(allData[i][1].toString());
       markers.add(Marker(
         markerId: MarkerId(allData[i]["pinId"].toString()),
         position: LatLng(double.parse(allData[i]["latitude"].toString()),double.parse(allData[i]["longitude"].toString())),
@@ -55,10 +53,19 @@ Future<void> getData() async {
             InfoWindow(title: allData[i]["description"].toString()),
         icon: BitmapDescriptor.defaultMarker,
       ));
-      print(allData[0]);
-    }
 
-    print(allData);
+      //print(getDistance(double.parse(allData[i]["latitude"].toString()), double.parse(allData[i]["longitude"].toString()), currentPosition.latitude, currentPosition.longitude));
+    }
+    }
+}
+
+void checkDistancesPeriodically() {
+  //print(allData);
+      if(currentPosition != null ) {
+    for(int i = 0;i < allData.length ; i++) {
+      print(getDistance(double.parse(allData[i]["latitude"].toString()), double.parse(allData[i]["longitude"].toString()), currentPosition.latitude, currentPosition.longitude));
+    }
+    }
 }
 
   @action
@@ -127,5 +134,33 @@ Future<void> getData() async {
                   latitude: lastMapPosition.latitude,
                   longitude: lastMapPosition.longitude,
                 )));
+  }
+
+
+  double getDistance(double latitude, double longitude, double latitudeUser, double longitudeUser) {
+
+        final int R = 6371; // Radius of the earth
+
+    double latDistance = radians(latitudeUser - latitude);
+    double lonDistance = radians(longitudeUser - longitude);
+    double a = sin(latDistance / 2) * sin(latDistance / 2)
+            + cos(radians(latitude)) * cos(radians(latitudeUser))
+            * sin(lonDistance / 2) * sin(lonDistance / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double distance = R * c * 1000; // convert to meters
+
+    return sqrt(distance);
+
+
+
+
+    /*double a;
+    double b;
+    double c;
+
+    a = cos(latitude)*cos(longitude)*cos(latitudeUser)*cos(longitudeUser);
+    b = cos(latitude)*sin(longitude)*cos(latitudeUser)*sin(longitudeUser);
+    c = sin(latitude)*sin(latitudeUser);
+    return a * cos(a + b + c) * 6371;*/
   }
 }
