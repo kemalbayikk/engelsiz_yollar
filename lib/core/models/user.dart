@@ -26,3 +26,4 @@ class UserData {
         surname: doc['surname'],);
   }
 }
+
