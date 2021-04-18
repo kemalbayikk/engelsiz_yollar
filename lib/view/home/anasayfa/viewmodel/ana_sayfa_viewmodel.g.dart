@@ -40,6 +40,21 @@ mixin _$AnasayfaViewModel on _AnasayfaViewModelBase, Store {
     });
   }
 
+  final _$closeMarkersAtom = Atom(name: '_AnasayfaViewModelBase.closeMarkers');
+
+  @override
+  Set<Marker> get closeMarkers {
+    _$closeMarkersAtom.reportRead();
+    return super.closeMarkers;
+  }
+
+  @override
+  set closeMarkers(Set<Marker> value) {
+    _$closeMarkersAtom.reportWrite(value, super.closeMarkers, () {
+      super.closeMarkers = value;
+    });
+  }
+
   final _$lastMapPositionAtom =
       Atom(name: '_AnasayfaViewModelBase.lastMapPosition');
 
@@ -126,6 +141,7 @@ mixin _$AnasayfaViewModel on _AnasayfaViewModelBase, Store {
     return '''
 currentPosition: ${currentPosition},
 markers: ${markers},
+closeMarkers: ${closeMarkers},
 lastMapPosition: ${lastMapPosition},
 currentMapType: ${currentMapType},
 allData: ${allData}

@@ -1,7 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:engelsiz_yollar/view/auth/login/view/login_view.dart';
-import 'package:engelsiz_yollar/view/home/anasayfa/view/ana_sayfa_view.dart';
-import 'package:engelsiz_yollar/view/splash/splas_view.dart';
+import 'view/auth/login/view/login_view.dart';
+import 'view/home/anasayfa/view/ana_sayfa_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

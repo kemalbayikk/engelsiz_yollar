@@ -1,8 +1,8 @@
-import 'package:engelsiz_yollar/core/components/cards/not_found_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../view/auth/login/view/login_view.dart';
+import '../../components/cards/not_found_view.dart';
 import '../../constants/navigation/navigation_constans.dart';
 
 class NavigationRoute {

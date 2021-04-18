@@ -1,8 +1,8 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
-import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
 import 'package:flutter/material.dart';
+
+import '../../extensions/context_extensions.dart';
 
 class AppConstants {
   static void showNormalToast(String title,
