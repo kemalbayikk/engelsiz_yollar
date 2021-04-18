@@ -2,6 +2,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:engelsiz_yollar/core/components/buttons/my_button.dart';
+import 'package:engelsiz_yollar/core/components/cards/custom_card.dart';
+import 'package:engelsiz_yollar/core/components/cards/modal_content.dart';
 import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
 import 'package:engelsiz_yollar/core/constants/navigation/navigation_constans.dart';
 import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
@@ -23,6 +26,7 @@ class AnasayfaViewModel = _AnasayfaViewModelBase with _$AnasayfaViewModel;
 abstract class _AnasayfaViewModelBase with Store {
   final picker = ImagePicker();
   File _image;
+  Reference storageRef = FirebaseStorage.instance.ref();
 
   GoogleMapController mapController;
   @observable
@@ -56,17 +60,13 @@ abstract class _AnasayfaViewModelBase with Store {
 
         markers.add(Marker(
           onTap: () {
-            print('$item');
             AppConstants().showModal(
                 context: context,
-                child: Column(
-                  children: [
-                    10.hSized,
-                    Image.network(
-                      item['mediaUrl'],
-                      height: context.customHeight(4),
-                    )
-                  ],
+                child: ModalContent(
+                  item: item,
+                  onTap: (pinId) async {
+                    await deletePost(pinId).then((value) => AppConstants.showSuccesToast('Başarılı',subTitle: 'Pin kaldırma talebiniz alınmıştır'));
+                  },
                 ));
           },
           markerId: MarkerId(allData[i]['pinId'].toString()),
@@ -81,19 +81,16 @@ abstract class _AnasayfaViewModelBase with Store {
     }
   }
 
-    deletePost(String pinId) async {
-    _collectionRef
-        .doc(pinId)
-        .get()
-        .then((doc) => {
-              if (doc.exists) {doc.reference.delete()}
-            });
+  Future deletePost(String pinId) async {
+    // await storageRef.child('pin$pinId.jpg').delete();
+    await _collectionRef.doc(pinId).get().then((doc) => {
+          if (doc.exists) {doc.reference.delete()}
+        });
 
+    
   }
 
-  void checkDistancesPeriodically() async {
-    getCurrentLocation();
-    print("current  : $currentPosition");
+  void checkDistancesPeriodically() {
     //print(allData);
     if (currentPosition != null) {
       for (int i = 0; i < allData.length; i++) {
