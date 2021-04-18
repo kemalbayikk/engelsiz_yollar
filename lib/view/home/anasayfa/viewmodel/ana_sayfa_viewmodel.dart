@@ -91,6 +91,7 @@ abstract class _AnasayfaViewModelBase with Store {
   }
 
   void checkDistancesPeriodically() async {
+    getCurrentLocation();
     //print(allData);
     if (currentPosition != null) {
       for (int i = 0; i < allData.length; i++) {
