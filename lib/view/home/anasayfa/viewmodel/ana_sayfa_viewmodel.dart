@@ -14,6 +14,7 @@ import 'package:engelsiz_yollar/view/home/pin_page/view/pin_page_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,6 +28,7 @@ abstract class _AnasayfaViewModelBase with Store {
   final picker = ImagePicker();
   File _image;
   Reference storageRef = FirebaseStorage.instance.ref();
+  FlutterTts flutterTts = FlutterTts()..setLanguage('tr-TR');
 
   GoogleMapController mapController;
   @observable
@@ -44,7 +46,6 @@ abstract class _AnasayfaViewModelBase with Store {
   var allData;
   CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('pins');
-
 
   Future<void> getData({
     @required BuildContext context,
@@ -64,7 +65,9 @@ abstract class _AnasayfaViewModelBase with Store {
                 child: ModalContent(
                   item: item,
                   onTap: (pinId) async {
-                    await deletePost(pinId).then((value) => AppConstants.showSuccesToast('Başarılı',subTitle: 'Pin kaldırma talebiniz alınmıştır'));
+                    await deletePost(pinId).then((value) =>
+                        AppConstants.showSuccesToast('Başarılı',
+                            subTitle: 'Pin kaldırma talebiniz alınmıştır'));
                   },
                 ));
           },
@@ -85,8 +88,6 @@ abstract class _AnasayfaViewModelBase with Store {
     await _collectionRef.doc(pinId).get().then((doc) => {
           if (doc.exists) {doc.reference.delete()}
         });
-
-    
   }
 
   void checkDistancesPeriodically() async {
@@ -107,12 +108,14 @@ abstract class _AnasayfaViewModelBase with Store {
             0.01) {
           print("markerss : ");
           print(allData[i]);
+          await _speak(allData[i]['description']);
           if (await Vibration.hasCustomVibrationsSupport()) {
-            Vibration.vibrate(duration: 1000);
+            await Vibration.vibrate(duration: 1000);
           } else {
-            Vibration.vibrate();
+            await Vibration.vibrate();
             await Future.delayed(Duration(milliseconds: 500));
-            Vibration.vibrate();
+            await Vibration.vibrate();
+            
           }
           //closeMarkers.add(markers.)
         }
@@ -190,5 +193,14 @@ abstract class _AnasayfaViewModelBase with Store {
             (1 - c((longitudeUser - longitude) * p)) /
             2;
     return 12742 * asin(sqrt(a));
+  }
+
+  Future _speak(String text) async {
+    if (text != null) {
+      if (text.isNotEmpty) {
+        await flutterTts.awaitSpeakCompletion(true);
+        await flutterTts.speak(text);
+      }
+    }
   }
 }

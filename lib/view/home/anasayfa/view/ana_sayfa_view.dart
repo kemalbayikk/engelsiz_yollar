@@ -19,8 +19,14 @@ class _AnasayfaViewState extends State<AnasayfaView> {
   void initState() {
     _viewModel.getCurrentLocation();
     _viewModel.getData(context: context);
-    const oneSec = const Duration(seconds:3);
-    new Timer.periodic(oneSec, (Timer t) => _viewModel.checkDistancesPeriodically());
+    const oneSec = Duration(seconds: 3);
+    Timer.periodic(
+        oneSec,
+        (Timer t) => _viewModel.checkDistancesPeriodically(
+            // onSpeak: (speak) {
+            //   print('samil $speak');
+            // },
+            ));
     super.initState();
   }
 
@@ -33,8 +39,8 @@ class _AnasayfaViewState extends State<AnasayfaView> {
           Padding(
             padding: const EdgeInsets.only(left: 30),
             child: FloatingActionButton(
-              backgroundColor: Colors.orange[100],
-              foregroundColor: Colors.black,
+              foregroundColor: context.theme.accentColor,
+              backgroundColor: context.theme.primaryColor,
               onPressed: () {
                 _viewModel.mapController.animateCamera(
                   CameraUpdate.newCameraPosition(
@@ -52,7 +58,8 @@ class _AnasayfaViewState extends State<AnasayfaView> {
             ),
           ),
           FloatingActionButton(
-            backgroundColor: Colors.red,
+            backgroundColor: context.theme.accentColor,
+            foregroundColor: context.theme.primaryColor,
             onPressed: () async {
               await _viewModel.getImage(context).then((value) {
                 setState(() {
@@ -79,7 +86,6 @@ class _AnasayfaViewState extends State<AnasayfaView> {
               myLocationButtonEnabled: false,
               myLocationEnabled: true,
               zoomControlsEnabled: false,
-
               onMapCreated: (GoogleMapController controller) {
                 _viewModel.mapController = controller;
               },

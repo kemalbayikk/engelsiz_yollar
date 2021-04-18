@@ -13,7 +13,7 @@ class MyButton extends StatelessWidget {
       padding: 5.paddingAll,
       margin: [5, 10].paddingSymmetric,
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).accentColor,
         borderRadius: 0.radius10,
         boxShadow: AppConstants.shadow_1,
       ),
