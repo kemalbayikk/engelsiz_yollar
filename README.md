@@ -1,16 +1,7 @@
 # engelsiz_yollar
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Engelsiz yollar projemiz görme engelli vatandaşların yolda bir bozukluk, direk vb. gibi engeller olduğunda sesli uyarı ve titreşimle haberdar olmalarını sağlıyor. Bu bozuklukları görme engeli olmayan duyarlı kişilerin uygulamamıza girerek konum işaretlemeleri, o bölgenin fotoğrafını çekmeleri ve bozukluğun ne olduğuna dair bir açıklama yazması gerekiyor. Görme engelli bir kişi uygulamayı açtığı anda başka hiçbir şeye gerek duymadan yoluna devam edebilir ve biz bu bozukluğu 10 metre öncesinden haber veriyoruz. O bozukluktan uzaklaştığında da uyarılar kendiliğinden sonlanıyor. Bu uyarıların uygulama geliştikçe belediyeler ile anlaşılıp onlara iletip, yoldaki bu problemlerin çözümlendirilmesini hızlandırabiliriz. Uygulamanın backend tarafında cloud firestore ve fotoğrafların saklanmasında Firebase storage kullandık. Authentication işlemleri içinde Firebase Authentication kullandık.
+![Screenshot_1618756620](https://user-images.githubusercontent.com/59340493/115149621-9a90ea80-a06d-11eb-9170-017e35fbca79.png)
+![Screenshot_1618756632](https://user-images.githubusercontent.com/59340493/115149646-ada3ba80-a06d-11eb-8f07-a44ab0d5284c.png)
+![Screenshot_1618756546](https://user-images.githubusercontent.com/59340493/115149597-89e07480-a06d-11eb-9d14-7e0b9d9348e9.png)
+![Screenshot_1618756603](https://user-images.githubusercontent.com/59340493/115149602-8cdb6500-a06d-11eb-9bf8-e0ba0ddaaa99.png)
