@@ -1,5 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
+import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
 import 'package:flutter/material.dart';
 
 class AppConstants {
@@ -116,5 +118,40 @@ class AppConstants {
     } else {
       return null;
     }
+  }
+
+  void showModal({
+    @required BuildContext context,
+    @required Widget child,
+  }) {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            height: context.customHeight(2),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: context.customHeight(2),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(50),
+                          topRight: Radius.circular(50)),
+                      color: Colors.grey.shade100,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    alignment: Alignment.center,
+                    child: child,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 }
