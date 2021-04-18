@@ -18,7 +18,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobx/mobx.dart';
-import 'package:vector_math/vector_math.dart';
+import 'package:vibration/vibration.dart';
 part 'ana_sayfa_viewmodel.g.dart';
 
 class AnasayfaViewModel = _AnasayfaViewModelBase with _$AnasayfaViewModel;
@@ -34,6 +34,8 @@ abstract class _AnasayfaViewModelBase with Store {
   @observable
   Set<Marker> markers = {};
   @observable
+  Set<Marker> closeMarkers = {};
+  @observable
   LatLng lastMapPosition = LatLng(37.3741, -122.0771);
   @observable
   MapType currentMapType = MapType.normal;
@@ -42,6 +44,8 @@ abstract class _AnasayfaViewModelBase with Store {
   var allData;
   CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('pins');
+  
+  Reference storageRef = FirebaseStorage.instance.ref();
 
   Future<void> getData({
     @required BuildContext context,
@@ -95,6 +99,24 @@ abstract class _AnasayfaViewModelBase with Store {
             double.parse(allData[i]["longitude"].toString()),
             currentPosition.latitude,
             currentPosition.longitude));
+
+        if (getDistance(
+                double.parse(allData[i]["latitude"].toString()),
+                double.parse(allData[i]["longitude"].toString()),
+                currentPosition.latitude,
+                currentPosition.longitude) <
+            0.01) {
+          print("markerss : ");
+          print(allData[i]);
+          if (await Vibration.hasCustomVibrationsSupport()) {
+            Vibration.vibrate(duration: 1000);
+          } else {
+            Vibration.vibrate();
+            await Future.delayed(Duration(milliseconds: 500));
+            Vibration.vibrate();
+          }
+          //closeMarkers.add(markers.)
+        }
       }
     }
   }
@@ -160,27 +182,14 @@ abstract class _AnasayfaViewModelBase with Store {
 
   double getDistance(double latitude, double longitude, double latitudeUser,
       double longitudeUser) {
-    final int R = 6371; // Radius of the earth
-
-    double latDistance = radians(latitudeUser - latitude);
-    double lonDistance = radians(longitudeUser - longitude);
-    double a = sin(latDistance / 2) * sin(latDistance / 2) +
-        cos(radians(latitude)) *
-            cos(radians(latitudeUser)) *
-            sin(lonDistance / 2) *
-            sin(lonDistance / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    double distance = R * c * 1000; // convert to meters
-
-    return sqrt(distance);
-
-    /*double a;
-    double b;
-    double c;
-
-    a = cos(latitude)*cos(longitude)*cos(latitudeUser)*cos(longitudeUser);
-    b = cos(latitude)*sin(longitude)*cos(latitudeUser)*sin(longitudeUser);
-    c = sin(latitude)*sin(latitudeUser);
-    return a * cos(a + b + c) * 6371;*/
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((latitudeUser - latitude) * p) / 2 +
+        c(latitude * p) *
+            c(latitudeUser * p) *
+            (1 - c((longitudeUser - longitude) * p)) /
+            2;
+    return 12742 * asin(sqrt(a));
   }
 }

@@ -19,8 +19,8 @@ class _AnasayfaViewState extends State<AnasayfaView> {
   void initState() {
     _viewModel.getCurrentLocation();
     _viewModel.getData(context: context);
-    //const oneSec = const Duration(seconds:2);
-    //new Timer.periodic(oneSec, (Timer t) => _viewModel.checkDistancesPeriodically());
+    const oneSec = const Duration(seconds:3);
+    new Timer.periodic(oneSec, (Timer t) => _viewModel.checkDistancesPeriodically());
     super.initState();
   }
 
