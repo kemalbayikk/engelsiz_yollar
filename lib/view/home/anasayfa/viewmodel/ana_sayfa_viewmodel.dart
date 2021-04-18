@@ -44,8 +44,7 @@ abstract class _AnasayfaViewModelBase with Store {
   var allData;
   CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('pins');
-  
-  Reference storageRef = FirebaseStorage.instance.ref();
+
 
   Future<void> getData({
     @required BuildContext context,
@@ -90,7 +89,7 @@ abstract class _AnasayfaViewModelBase with Store {
     
   }
 
-  void checkDistancesPeriodically() {
+  void checkDistancesPeriodically() async {
     //print(allData);
     if (currentPosition != null) {
       for (int i = 0; i < allData.length; i++) {
