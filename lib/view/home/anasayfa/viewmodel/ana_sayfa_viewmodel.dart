@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
 import 'package:engelsiz_yollar/core/constants/navigation/navigation_constans.dart';
+import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
+import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
 import 'package:engelsiz_yollar/core/init/navigation/navigation_service.dart';
 import 'package:engelsiz_yollar/view/home/pin_page/view/pin_page_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,55 +34,59 @@ abstract class _AnasayfaViewModelBase with Store {
   MapType currentMapType = MapType.normal;
 
   @observable
-  int myNum = 0;
-
-  @observable
   var allData;
-
   CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('pins');
 
-  Future<void> getData() async {
+  Future<void> getData({
+    @required BuildContext context,
+  }) async {
     // Get docs from collection reference
     QuerySnapshot querySnapshot = await _collectionRef.get();
     // Get data from docs and convert map to List
     allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    if(allData != null ) {
-    for(int i = 0;i < allData.length ; i++) {
-      markers.add(Marker(
-        markerId: MarkerId(allData[i]["pinId"].toString()),
-        position: LatLng(double.parse(allData[i]["latitude"].toString()),
-            double.parse(allData[i]["longitude"].toString())),
-        infoWindow: InfoWindow(title: allData[i]["description"].toString()),
-        icon: BitmapDescriptor.defaultMarker,
-      ));
+    if (allData != null) {
+      for (int i = 0; i < allData.length; i++) {
+        var item = allData[i];
 
-      //print(getDistance(double.parse(allData[i]["latitude"].toString()), double.parse(allData[i]["longitude"].toString()), currentPosition.latitude, currentPosition.longitude));
-    }
-    }
-}
+        markers.add(Marker(
+          onTap: () {
+            print('$item');
+            AppConstants().showModal(
+                context: context,
+                child: Column(
+                  children: [
+                    10.hSized,
+                    Image.network(
+                      item['mediaUrl'],
+                      height: context.customHeight(4),
+                    )
+                  ],
+                ));
+          },
+          markerId: MarkerId(allData[i]['pinId'].toString()),
+          position: LatLng(double.parse(allData[i]['latitude'].toString()),
+              double.parse(allData[i]['longitude'].toString())),
+          infoWindow: InfoWindow(title: allData[i]['description'].toString()),
+          icon: BitmapDescriptor.defaultMarker,
+        ));
 
-
-void checkDistancesPeriodically() {
-  //print(allData);
-      if(currentPosition != null ) {
-    for(int i = 0;i < allData.length ; i++) {
-      print(getDistance(double.parse(allData[i]["latitude"].toString()), double.parse(allData[i]["longitude"].toString()), currentPosition.latitude, currentPosition.longitude));
+        //print(getDistance(double.parse(allData[i]["latitude"].toString()), double.parse(allData[i]["longitude"].toString()), currentPosition.latitude, currentPosition.longitude));
+      }
     }
-    }
-}
-
-  @action
-  void increment() {
-    myNum++;
-    AppConstants.showSuccesToast('Başarılı', subTitle: 'Pin başarıyla eklendi');
   }
 
-  @action
-  void decrement() {
-    myNum--;
-
-    AppConstants.showErrorToast('Hata', subTitle: 'Lüten tekrar deneyiniz');
+  void checkDistancesPeriodically() {
+    //print(allData);
+    if (currentPosition != null) {
+      for (int i = 0; i < allData.length; i++) {
+        print(getDistance(
+            double.parse(allData[i]["latitude"].toString()),
+            double.parse(allData[i]["longitude"].toString()),
+            currentPosition.latitude,
+            currentPosition.longitude));
+      }
+    }
   }
 
   @action
@@ -126,41 +132,37 @@ void checkDistancesPeriodically() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PinPage(
-                    image: _image,
-                    latitude: lastMapPosition.latitude,
-                    longitude: lastMapPosition.longitude,
-                  )));
+            context,
+            MaterialPageRoute(
+                builder: (context) => PinPage(
+                      image: _image,
+                      latitude: lastMapPosition.latitude,
+                      longitude: lastMapPosition.longitude,
+                    )));
       } else {
         print('No image selected.');
       }
-
-      
     } else {
       await NavigationService.instance
           .navigateToPage(path: NavigationConstant.LOGIN_VIEW);
     }
   }
 
-
-  double getDistance(double latitude, double longitude, double latitudeUser, double longitudeUser) {
-
-        final int R = 6371; // Radius of the earth
+  double getDistance(double latitude, double longitude, double latitudeUser,
+      double longitudeUser) {
+    final int R = 6371; // Radius of the earth
 
     double latDistance = radians(latitudeUser - latitude);
     double lonDistance = radians(longitudeUser - longitude);
-    double a = sin(latDistance / 2) * sin(latDistance / 2)
-            + cos(radians(latitude)) * cos(radians(latitudeUser))
-            * sin(lonDistance / 2) * sin(lonDistance / 2);
+    double a = sin(latDistance / 2) * sin(latDistance / 2) +
+        cos(radians(latitude)) *
+            cos(radians(latitudeUser)) *
+            sin(lonDistance / 2) *
+            sin(lonDistance / 2);
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
     double distance = R * c * 1000; // convert to meters
 
     return sqrt(distance);
-
-
-
 
     /*double a;
     double b;

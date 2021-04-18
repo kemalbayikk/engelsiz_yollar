@@ -72,18 +72,18 @@ mixin _$AnasayfaViewModel on _AnasayfaViewModelBase, Store {
     });
   }
 
-  final _$myNumAtom = Atom(name: '_AnasayfaViewModelBase.myNum');
+  final _$allDataAtom = Atom(name: '_AnasayfaViewModelBase.allData');
 
   @override
-  int get myNum {
-    _$myNumAtom.reportRead();
-    return super.myNum;
+  dynamic get allData {
+    _$allDataAtom.reportRead();
+    return super.allData;
   }
 
   @override
-  set myNum(int value) {
-    _$myNumAtom.reportWrite(value, super.myNum, () {
-      super.myNum = value;
+  set allData(dynamic value) {
+    _$allDataAtom.reportWrite(value, super.allData, () {
+      super.allData = value;
     });
   }
 
@@ -100,33 +100,22 @@ mixin _$AnasayfaViewModel on _AnasayfaViewModelBase, Store {
       ActionController(name: '_AnasayfaViewModelBase');
 
   @override
-  void increment() {
-    final _$actionInfo = _$_AnasayfaViewModelBaseActionController.startAction(
-        name: '_AnasayfaViewModelBase.increment');
-    try {
-      return super.increment();
-    } finally {
-      _$_AnasayfaViewModelBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void decrement() {
-    final _$actionInfo = _$_AnasayfaViewModelBaseActionController.startAction(
-        name: '_AnasayfaViewModelBase.decrement');
-    try {
-      return super.decrement();
-    } finally {
-      _$_AnasayfaViewModelBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   dynamic onCameraMove(CameraPosition cameraPosition) {
     final _$actionInfo = _$_AnasayfaViewModelBaseActionController.startAction(
         name: '_AnasayfaViewModelBase.onCameraMove');
     try {
       return super.onCameraMove(cameraPosition);
+    } finally {
+      _$_AnasayfaViewModelBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic onAddMarkerButtonPressed() {
+    final _$actionInfo = _$_AnasayfaViewModelBaseActionController.startAction(
+        name: '_AnasayfaViewModelBase.onAddMarkerButtonPressed');
+    try {
+      return super.onAddMarkerButtonPressed();
     } finally {
       _$_AnasayfaViewModelBaseActionController.endAction(_$actionInfo);
     }
@@ -139,7 +128,7 @@ currentPosition: ${currentPosition},
 markers: ${markers},
 lastMapPosition: ${lastMapPosition},
 currentMapType: ${currentMapType},
-myNum: ${myNum}
+allData: ${allData}
     ''';
   }
 }
