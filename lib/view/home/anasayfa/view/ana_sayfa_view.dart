@@ -27,7 +27,6 @@ class _AnasayfaViewState extends State<AnasayfaView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -77,9 +76,10 @@ class _AnasayfaViewState extends State<AnasayfaView> {
               mapType: _viewModel.currentMapType,
               markers: _viewModel.markers,
               onCameraMove: _viewModel.onCameraMove,
-              myLocationButtonEnabled: true,
+              myLocationButtonEnabled: false,
               myLocationEnabled: true,
               zoomControlsEnabled: false,
+
               onMapCreated: (GoogleMapController controller) {
                 _viewModel.mapController = controller;
               },

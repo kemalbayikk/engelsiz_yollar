@@ -140,8 +140,8 @@ class AppConstants {
                     height: context.customHeight(2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(50),
-                          topRight: Radius.circular(50)),
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15)),
                       color: Colors.grey.shade100,
                     ),
                     padding: EdgeInsets.symmetric(horizontal: 8),
