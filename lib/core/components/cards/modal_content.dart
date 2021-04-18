@@ -1,8 +1,7 @@
-import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
-import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
-import 'package:engelsiz_yollar/core/init/navigation/navigation_service.dart';
 import 'package:flutter/material.dart';
 
+import '../../extensions/context_extensions.dart';
+import '../../init/navigation/navigation_service.dart';
 import 'custom_card.dart';
 
 class ModalContent extends StatelessWidget {

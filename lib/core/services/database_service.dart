@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:engelsiz_yollar/core/models/user.dart';
+
+import '../models/user.dart';
 
 class DatabaseService {
   static DatabaseService instance = DatabaseService();

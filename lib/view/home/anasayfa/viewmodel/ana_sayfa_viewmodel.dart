@@ -1,16 +1,11 @@
 import 'dart:io';
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:engelsiz_yollar/core/components/buttons/my_button.dart';
-import 'package:engelsiz_yollar/core/components/cards/custom_card.dart';
-import 'package:engelsiz_yollar/core/components/cards/modal_content.dart';
-import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
-import 'package:engelsiz_yollar/core/constants/navigation/navigation_constans.dart';
-import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
-import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
-import 'package:engelsiz_yollar/core/init/navigation/navigation_service.dart';
-import 'package:engelsiz_yollar/view/home/pin_page/view/pin_page_view.dart';
+import '../../../../core/components/cards/modal_content.dart';
+import '../../../../core/constants/app/app_constants.dart';
+import '../../../../core/constants/navigation/navigation_constans.dart';
+import '../../../../core/init/navigation/navigation_service.dart';
+import '../../pin_page/view/pin_page_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -44,18 +39,18 @@ abstract class _AnasayfaViewModelBase with Store {
 
   @observable
   var allData;
-  CollectionReference _collectionRef =
+  final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('pins');
 
   Future<void> getData({
     @required BuildContext context,
   }) async {
     // Get docs from collection reference
-    QuerySnapshot querySnapshot = await _collectionRef.get();
+    var querySnapshot = await _collectionRef.get();
     // Get data from docs and convert map to List
     allData = querySnapshot.docs.map((doc) => doc.data()).toList();
     if (allData != null) {
-      for (int i = 0; i < allData.length; i++) {
+      for (var i = 0; i < allData.length; i++) {
         var item = allData[i];
 
         markers.add(Marker(
@@ -94,20 +89,20 @@ abstract class _AnasayfaViewModelBase with Store {
     getCurrentLocation();
     //print(allData);
     if (currentPosition != null) {
-      for (int i = 0; i < allData.length; i++) {
+      for (var i = 0; i < allData.length; i++) {
         print(getDistance(
-            double.parse(allData[i]["latitude"].toString()),
-            double.parse(allData[i]["longitude"].toString()),
+            double.parse(allData[i]['latitude'].toString()),
+            double.parse(allData[i]['longitude'].toString()),
             currentPosition.latitude,
             currentPosition.longitude));
 
         if (getDistance(
-                double.parse(allData[i]["latitude"].toString()),
-                double.parse(allData[i]["longitude"].toString()),
+                double.parse(allData[i]['latitude'].toString()),
+                double.parse(allData[i]['longitude'].toString()),
                 currentPosition.latitude,
                 currentPosition.longitude) <
             0.01) {
-          print("markerss : ");
+          print('markerss : ');
           print(allData[i]);
           await _speak(allData[i]['description']);
           if (await Vibration.hasCustomVibrationsSupport()) {
@@ -135,7 +130,7 @@ abstract class _AnasayfaViewModelBase with Store {
         .then((Position position) async {
       currentPosition = position;
       print(currentPosition);
-      mapController.animateCamera(
+      await mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: LatLng(position.latitude, position.longitude),
@@ -144,7 +139,7 @@ abstract class _AnasayfaViewModelBase with Store {
         ),
       );
     }).catchError((e) {
-      print("error");
+      print('error');
       print(e);
     });
   }

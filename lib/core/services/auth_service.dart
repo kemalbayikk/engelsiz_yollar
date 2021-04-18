@@ -1,15 +1,11 @@
-import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
-import 'package:engelsiz_yollar/core/models/user.dart';
-import 'package:engelsiz_yollar/core/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'database_service.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   User currentUser;
   AuthService();
-  UserFromFirebase _userFromFirebaseUser(User user) {
-    return user != null ? UserFromFirebase(uid: user.uid) : null;
-  }
 
   Future<String> signInWith(String email, String password) async {
     try {

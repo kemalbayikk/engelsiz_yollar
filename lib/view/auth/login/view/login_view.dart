@@ -1,11 +1,11 @@
-import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
-import 'package:engelsiz_yollar/core/constants/navigation/navigation_constans.dart';
-import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
-import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
-import 'package:engelsiz_yollar/core/init/navigation/navigation_service.dart';
-import 'package:engelsiz_yollar/core/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+
+import '../../../../core/constants/app/app_constants.dart';
+import '../../../../core/constants/navigation/navigation_constans.dart';
+import '../../../../core/extensions/num_extensions.dart';
+import '../../../../core/init/navigation/navigation_service.dart';
+import '../../../../core/services/auth_service.dart';
 
 class LoginView extends StatelessWidget {
   @override

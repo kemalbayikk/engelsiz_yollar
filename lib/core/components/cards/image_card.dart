@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
-import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
-import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
 import 'package:flutter/material.dart';
+
+import '../../constants/app/app_constants.dart';
+import '../../extensions/num_extensions.dart';
 
 class ImageCard extends StatelessWidget {
   final File image;
