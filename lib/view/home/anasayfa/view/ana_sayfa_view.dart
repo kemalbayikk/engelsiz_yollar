@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:engelsiz_yollar/core/components/buttons/add_marker_button.dart';
 import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
 import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
 import 'package:engelsiz_yollar/view/home/anasayfa/viewmodel/ana_sayfa_viewmodel.dart';
@@ -16,18 +18,64 @@ class _AnasayfaViewState extends State<AnasayfaView> {
   @override
   void initState() {
     _viewModel.getCurrentLocation();
-    _viewModel.getData();
+    _viewModel.getData(context: context);
+    const oneSec = Duration(seconds: 3);
+    Timer.periodic(
+        oneSec,
+        (Timer t) => _viewModel.checkDistancesPeriodically(
+            // onSpeak: (speak) {
+            //   print('samil $speak');
+            // },
+            ));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 30),
+            child: FloatingActionButton(
+              foregroundColor: context.theme.accentColor,
+              backgroundColor: context.theme.primaryColor,
+              onPressed: () {
+                _viewModel.mapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      target: LatLng(
+                        _viewModel.currentPosition.latitude,
+                        _viewModel.currentPosition.longitude,
+                      ),
+                      zoom: 18.0,
+                    ),
+                  ),
+                );
+              },
+              child: Icon(Icons.my_location),
+            ),
+          ),
+          FloatingActionButton(
+            backgroundColor: context.theme.accentColor,
+            foregroundColor: context.theme.primaryColor,
+            onPressed: () async {
+              await _viewModel.getImage(context).then((value) {
+                setState(() {
+                  _viewModel.getData(context: context);
+                });
+              });
+            },
+            child: Icon(Icons.add),
+          ),
+        ],
+      ),
       body: Stack(
+        alignment: Alignment.center,
         children: [
           Observer(builder: (_) {
             return GoogleMap(
-              
               initialCameraPosition: CameraPosition(
                 target: _viewModel.lastMapPosition,
                 zoom: 16.0,
@@ -35,119 +83,23 @@ class _AnasayfaViewState extends State<AnasayfaView> {
               mapType: _viewModel.currentMapType,
               markers: _viewModel.markers,
               onCameraMove: _viewModel.onCameraMove,
-              myLocationButtonEnabled: true,
+              myLocationButtonEnabled: false,
               myLocationEnabled: true,
+              zoomControlsEnabled: false,
               onMapCreated: (GoogleMapController controller) {
                 _viewModel.mapController = controller;
               },
             );
           }),
-          /*Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Align(
-                alignment: Alignment.topRight,
-                child: Column(
-                  children: [
-                    FloatingActionButton(
-                        heroTag: "btn1",
-                        onPressed: () {
-                          setState(() {
-                            _viewModel.getImage(context);
-                          });
-                        },
-                        materialTapTargetSize: MaterialTapTargetSize.padded,
-                        backgroundColor: Colors.black,
-                        child: Icon(Icons.add_location, size: 36.0)),
-                  ],
-                )),
-          ),*/
-          Padding(
-            padding: EdgeInsets.only(bottom: 24.0),
-            child: Align(
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.location_pin,
-                  color: Colors.black,
-                )),
-          ),
-          Padding(
-            padding: EdgeInsets.all(42.0),
-            child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  children: [
-                    RaisedButton(
-                      onPressed: () async {
-                              setState(() {
-                            _viewModel.getImage(context);
-                          });
-                      },
-                      child: Text(
-                        "Yolda Bir Sorun İşaretle",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      color: Colors.red,
-                    )
-                  ],
-                )),
-          ),
-          SafeArea(
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.orange[100], // button color
-                    child: InkWell(
-                      splashColor: Colors.orange, // inkwell color
-                      child: SizedBox(
-                        width: 56,
-                        height: 56,
-                        child: Icon(Icons.my_location),
-                      ),
-                      onTap: () {
-                        _viewModel.mapController.animateCamera(
-                          CameraUpdate.newCameraPosition(
-                            CameraPosition(
-                              target: LatLng(
-                                _viewModel.currentPosition.latitude,
-                                _viewModel.currentPosition.longitude,
-                              ),
-                              zoom: 18.0,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          Container(
+              padding: EdgeInsets.only(bottom: 24.0),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.location_pin,
+                color: Colors.black,
+              )),
         ],
       ),
     );
-    /*return Scaffold(
-      floatingActionButton: Row(
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              _viewModel.increment();
-            },
-          ),
-          FloatingActionButton(
-            onPressed: () {
-              _viewModel.decrement();
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Observer(builder: (_) {
-          return Text('${_viewModel.myNum}');
-        }),
-      ),
-    );*/
   }
 }

@@ -1,16 +1,25 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:engelsiz_yollar/core/components/buttons/my_button.dart';
+import 'package:engelsiz_yollar/core/components/cards/custom_card.dart';
+import 'package:engelsiz_yollar/core/components/cards/modal_content.dart';
 import 'package:engelsiz_yollar/core/constants/app/app_constants.dart';
 import 'package:engelsiz_yollar/core/constants/navigation/navigation_constans.dart';
+import 'package:engelsiz_yollar/core/extensions/context_extensions.dart';
+import 'package:engelsiz_yollar/core/extensions/num_extensions.dart';
 import 'package:engelsiz_yollar/core/init/navigation/navigation_service.dart';
 import 'package:engelsiz_yollar/view/home/pin_page/view/pin_page_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobx/mobx.dart';
+import 'package:vibration/vibration.dart';
 part 'ana_sayfa_viewmodel.g.dart';
 
 class AnasayfaViewModel = _AnasayfaViewModelBase with _$AnasayfaViewModel;
@@ -18,6 +27,8 @@ class AnasayfaViewModel = _AnasayfaViewModelBase with _$AnasayfaViewModel;
 abstract class _AnasayfaViewModelBase with Store {
   final picker = ImagePicker();
   File _image;
+  Reference storageRef = FirebaseStorage.instance.ref();
+  FlutterTts flutterTts = FlutterTts()..setLanguage('tr-TR');
 
   GoogleMapController mapController;
   @observable
@@ -25,54 +36,92 @@ abstract class _AnasayfaViewModelBase with Store {
   @observable
   Set<Marker> markers = {};
   @observable
+  Set<Marker> closeMarkers = {};
+  @observable
   LatLng lastMapPosition = LatLng(37.3741, -122.0771);
   @observable
   MapType currentMapType = MapType.normal;
 
   @observable
-  int myNum = 0;
-
-  @observable
   var allData;
-
   CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('pins');
 
-  Future<void> getData() async {
+  Future<void> getData({
+    @required BuildContext context,
+  }) async {
     // Get docs from collection reference
-
     QuerySnapshot querySnapshot = await _collectionRef.get();
-    double latitude;
-    double longitude;
-
     // Get data from docs and convert map to List
     allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    for (int i = 0; i < allData.length; i++) {
-      print(allData[i][1].toString());
-      markers.add(Marker(
-        markerId: MarkerId(allData[i]["pinId"].toString()),
-        position: LatLng(double.parse(allData[i]["latitude"].toString()),
-            double.parse(allData[i]["longitude"].toString())),
-        infoWindow: InfoWindow(title: allData[i]["description"].toString()),
-        icon: BitmapDescriptor.defaultMarker,
-      ));
-      print(allData[0]);
+    if (allData != null) {
+      for (int i = 0; i < allData.length; i++) {
+        var item = allData[i];
+
+        markers.add(Marker(
+          onTap: () {
+            AppConstants().showModal(
+                context: context,
+                child: ModalContent(
+                  item: item,
+                  onTap: (pinId) async {
+                    await deletePost(pinId).then((value) =>
+                        AppConstants.showSuccesToast('Başarılı',
+                            subTitle: 'Pin kaldırma talebiniz alınmıştır'));
+                  },
+                ));
+          },
+          markerId: MarkerId(allData[i]['pinId'].toString()),
+          position: LatLng(double.parse(allData[i]['latitude'].toString()),
+              double.parse(allData[i]['longitude'].toString())),
+          infoWindow: InfoWindow(title: allData[i]['description'].toString()),
+          icon: BitmapDescriptor.defaultMarker,
+        ));
+
+        //print(getDistance(double.parse(allData[i]["latitude"].toString()), double.parse(allData[i]["longitude"].toString()), currentPosition.latitude, currentPosition.longitude));
+      }
     }
-
-    print(allData);
   }
 
-  @action
-  void increment() {
-    myNum++;
-    AppConstants.showSuccesToast('Başarılı', subTitle: 'Pin başarıyla eklendi');
+  Future deletePost(String pinId) async {
+    // await storageRef.child('pin$pinId.jpg').delete();
+    await _collectionRef.doc(pinId).get().then((doc) => {
+          if (doc.exists) {doc.reference.delete()}
+        });
   }
 
-  @action
-  void decrement() {
-    myNum--;
+  void checkDistancesPeriodically() async {
+    getCurrentLocation();
+    //print(allData);
+    if (currentPosition != null) {
+      for (int i = 0; i < allData.length; i++) {
+        print(getDistance(
+            double.parse(allData[i]["latitude"].toString()),
+            double.parse(allData[i]["longitude"].toString()),
+            currentPosition.latitude,
+            currentPosition.longitude));
 
-    AppConstants.showErrorToast('Hata', subTitle: 'Lüten tekrar deneyiniz');
+        if (getDistance(
+                double.parse(allData[i]["latitude"].toString()),
+                double.parse(allData[i]["longitude"].toString()),
+                currentPosition.latitude,
+                currentPosition.longitude) <
+            0.01) {
+          print("markerss : ");
+          print(allData[i]);
+          await _speak(allData[i]['description']);
+          if (await Vibration.hasCustomVibrationsSupport()) {
+            await Vibration.vibrate(duration: 1000);
+          } else {
+            await Vibration.vibrate();
+            await Future.delayed(Duration(milliseconds: 500));
+            await Vibration.vibrate();
+            
+          }
+          //closeMarkers.add(markers.)
+        }
+      }
+    }
   }
 
   @action
@@ -118,21 +167,41 @@ abstract class _AnasayfaViewModelBase with Store {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PinPage(
-                    image: _image,
-                    latitude: lastMapPosition.latitude,
-                    longitude: lastMapPosition.longitude,
-                  )));
+            context,
+            MaterialPageRoute(
+                builder: (context) => PinPage(
+                      image: _image,
+                      latitude: lastMapPosition.latitude,
+                      longitude: lastMapPosition.longitude,
+                    )));
       } else {
         print('No image selected.');
       }
-
-      
     } else {
       await NavigationService.instance
           .navigateToPage(path: NavigationConstant.LOGIN_VIEW);
+    }
+  }
+
+  double getDistance(double latitude, double longitude, double latitudeUser,
+      double longitudeUser) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((latitudeUser - latitude) * p) / 2 +
+        c(latitude * p) *
+            c(latitudeUser * p) *
+            (1 - c((longitudeUser - longitude) * p)) /
+            2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  Future _speak(String text) async {
+    if (text != null) {
+      if (text.isNotEmpty) {
+        await flutterTts.awaitSpeakCompletion(true);
+        await flutterTts.speak(text);
+      }
     }
   }
 }

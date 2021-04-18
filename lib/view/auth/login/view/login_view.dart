@@ -11,6 +11,10 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
+      theme: LoginTheme(
+          accentColor: Colors.black,
+          primaryColor: Colors.orange,
+          titleStyle: TextStyle(color: Colors.white)),
       messages: LoginMessages(
           forgotPasswordButton: 'Şifremi Unuttum?',
           signupButton: 'Kayıt Ol',
@@ -29,12 +33,10 @@ class LoginView extends StatelessWidget {
           flushbarTitleError: 'Hata'),
       onLogin: (data) async {
         return await AuthService().signInWith(data.name, data.password);
-        
       },
       onSignup: (data) async {
-       return await AuthService()
+        return await AuthService()
             .registerWith(data.name, data.password, 'samil', 'demir');
-           
       },
       onRecoverPassword: (data) {
         print(' onRecoverPassword $data');
